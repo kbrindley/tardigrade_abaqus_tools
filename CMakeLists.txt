@@ -1,19 +1,19 @@
 #===================================================================================================== PROJECT SETUP ===
-cmake_minimum_required(VERSION 3.14)
-project(tardigrade_abaqus_tools VERSION 0.1.0)
-
-# Added a flag for whether the python bindings for abaqus tools get built
-set(TARDIGRADE_ABAQUS_TOOLS_BUILD_PYTHON_BINDINGS ON CACHE BOOL "Flag for whether the python bindings should be built")
+cmake_minimum_required(VERSION 3.30)
+project(tardigrade_abaqus_tools LANGUAGES CXX)
 
 # Set common project paths relative to project root directory
 set(CPP_SRC_PATH "src/cpp")
 set(CMAKE_SRC_PATH "src/cmake")
 
-# Add the cmake folder to locate project CMake module(s)
-set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/${CMAKE_SRC_PATH}" ${CMAKE_MODULE_PATH})
+# Added a flag for whether the python bindings for upstream from-source tools get built
+set(TARDIGRADE_ABAQUS_TOOLS_BUILD_PYTHON_BINDINGS ON CACHE BOOL "Flag for whether the python bindings should be built")
 
 # Add a flag for if a full build of all tardigrade repositories should be performed
 set(TARDIGRADE_FULL_BUILD OFF CACHE BOOL "Flag for whether a full build of Tardigrade should be performed (i.e., all repos pulled from git and built)")
+
+# Add the cmake folder to locate project CMake module(s)
+set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/${CMAKE_SRC_PATH}" ${CMAKE_MODULE_PATH})
 
 # Set build type checks
 string(TOLOWER "${CMAKE_BUILD_TYPE}" cmake_build_type_lower)
@@ -23,7 +23,6 @@ if(cmake_build_type_lower STREQUAL "conda-test")
 endif()
 
 # Get version number from Git
-set(VERSION_UPDATE_FROM_GIT True)
 if(${not_conda_test} STREQUAL "true")
     if (DEFINED ENV{PREFIX})
         set(Python_ROOT_DIR "$ENV{PREFIX}/bin")
@@ -37,7 +36,7 @@ if(${not_conda_test} STREQUAL "true")
     if(${${PROJECT_NAME}_VERSION} STREQUAL "")
         set(${PROJECT_NAME}_VERSION 0.0.0)
     endif()
-    project(${PROJECT_NAME} VERSION ${${PROJECT_NAME}_VERSION})
+    project(${PROJECT_NAME} VERSION ${${PROJECT_NAME}_VERSION} LANGUAGES CXX)
 endif()
 
 # Add installation directory variables
@@ -109,7 +108,7 @@ endif()
 # Only add tests and documentation for current project builds. Protects downstream project builds.
 if(CMAKE_PROJECT_NAME STREQUAL PROJECT_NAME)
     # Find Boost. Required for tests
-    find_package(Boost 1.53.0 REQUIRED COMPONENTS unit_test_framework)
+    find_package(Boost 1.82.0 REQUIRED)
     # Add tests and docs
     add_subdirectory ("${CPP_SRC_PATH}/tests")
     if(${not_conda_test} STREQUAL "true")
